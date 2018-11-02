@@ -1,15 +1,19 @@
 const fs = require("fs");
 const User = require("./../model/user");
 
-var UserService = {
+let userFilePath = "user.txt";
 
-    findByUserName: () => {
+let UserService = {
+
+    findByUserName: (username) => {
 
         try { 
-            var content = fs.readFileSync("user.txt");                
-            var jsonContent = JSON.parse(content);
-            console.log("Output Content : \n"+ jsonContent);
-            return new User("steve", "test");
+            let content = fs.readFileSync(userFilePath);                
+            let users = JSON.parse(content);
+            let user = users.filter(user => {
+                return user.username === username
+              })            
+            return user;
         } catch (e) {
             console.log("failed to load user data", e);
             return null;
@@ -19,7 +23,7 @@ var UserService = {
         try { 
             let users = [new User("user1", "1234"), new User("user2", "1234")];    
 
-            fs.writeFile('user.txt', JSON.stringify(users), function (err) {
+            fs.writeFile(userFilePath, JSON.stringify(users), function (err) {
                 if (err) throw err;
                 console.log('Replaced!');
             });
