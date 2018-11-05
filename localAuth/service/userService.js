@@ -1,7 +1,7 @@
 const fs = require("fs");
 const User = require("./../model/user");
 
-let userFilePath = "user.txt";
+let userFilePath = "user.json";
 
 let UserService = {
 
@@ -21,11 +21,11 @@ let UserService = {
     },
     loadDummyData: () => {
         try { 
-            let users = [new User("user1", "1234"), new User("user2", "1234")];    
+            let users = [new User("user1", "1234", ["role a", "role b"]), new User("user2", "1234", ["role c", "role d"])];    
 
             fs.writeFile(userFilePath, JSON.stringify(users), function (err) {
                 if (err) throw err;
-                console.log('Replaced!');
+                console.log('loadDummyData done!');
             });
             
             return users;
