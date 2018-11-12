@@ -1,2 +1,4 @@
 /localAuth/node_modules
 /localAuth/package-lock.json
+/localSession/node_modules
+/localSession/package-lock.json
