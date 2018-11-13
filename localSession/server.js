@@ -26,23 +26,64 @@ const jwtSecret = "123";
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.get('/',function(req,res){  
+app.get('/home',function(req,res){  
+    console.log("/home");
     console.log(req.cookies);
-    const token = req.session.jwt;
+    console.log(req.session);
+    //const token = req.session.jwt;
+    const cookieToken = req.cookies.token;
     // create new session object.
-    if(token) {
-        const cookieToken = req.cookies.token;
+    //if(token) {
+    if (cookieToken) {
+        //const cookieToken = req.cookies.token;
         // if email key is sent redirect.      
         let jwtData = undefined;        
-        jwtData = jwt.verify(token, jwtSecret);
-        res.send({jwtData, cookieToken});
+        try {
+            jwtData = jwt.verify(cookieToken, jwtSecret);
+            res.send({jwtData, cookieToken});
+        } catch(err) {
+            // err
+            res.send({err});
+        }
+        
     } else {
         // else go to home page.
         res.send("No JWT");
     }
 });
 
+app.get('/auth',function(req,res){  
+    console.log("/auth");
+    //console.log(req);
+    console.log(req.cookies);
+    console.log(req.session);
+    //const token = req.session.jwt;
+    const cookieToken = req.cookies.token;
+    // create new session object.
+    //if(token) {
+    if (cookieToken) {
+        //const cookieToken = req.cookies.token;
+        // if email key is sent redirect.      
+        let jwtData = undefined;        
+        try {
+            jwtData = jwt.verify(cookieToken, jwtSecret);
+            console.log(jwtData);
+            res.status(200).send({jwtData, cookieToken});
+        } catch(err) {
+            // err
+            console.log(err);
+            res.status(401).send({err});
+        }
+        
+    } else {
+        // else go to home page.
+        console.log("No JWT");
+        res.status(401).send("No JWT");
+    }
+});
+
 app.get('/login',function(req,res){
+    console.log("/login");
     // when user login set the key to redis.
     let payload = JSON.stringify({
         userid: "Steve",
@@ -54,16 +95,18 @@ app.get('/login',function(req,res){
       console.log(token);
 
     //res.send("login");
+    //  path="/" is default
     res.cookie('token', token);
     res.status(200).send({ auth: true, token: token });
 });
 
 app.get('/logout',function(req,res){
+    console.log("/logout");
     req.session.destroy(function(err){
         if(err){
             console.log(err);
         } else {
-            res.redirect('/');
+            res.redirect('/home');
         }
     });
 });
