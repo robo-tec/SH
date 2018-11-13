@@ -52,6 +52,32 @@ app.get('/home',function(req,res){
     }
 });
 
+app.get('/home2',function(req,res){  
+    console.log("/home2");
+    console.log(req.cookies);
+    console.log(req.session);
+    //const token = req.session.jwt;
+    const cookieToken = req.cookies.token;
+    // create new session object.
+    //if(token) {
+    if (cookieToken) {
+        //const cookieToken = req.cookies.token;
+        // if email key is sent redirect.      
+        let jwtData = undefined;        
+        try {
+            jwtData = jwt.verify(cookieToken, jwtSecret);
+            res.send({jwtData, cookieToken});
+        } catch(err) {
+            // err
+            res.send({err});
+        }
+        
+    } else {
+        // else go to home page.
+        res.send("No JWT");
+    }
+});
+
 app.get('/auth',function(req,res){  
     console.log("/auth");
     //console.log(req);
@@ -68,7 +94,8 @@ app.get('/auth',function(req,res){
         try {
             jwtData = jwt.verify(cookieToken, jwtSecret);
             console.log(jwtData);
-            res.status(200).send({jwtData, cookieToken});
+            //res.status(200).send({jwtData, cookieToken});
+            res.status(200).json({status:"ok"});
         } catch(err) {
             // err
             console.log(err);
